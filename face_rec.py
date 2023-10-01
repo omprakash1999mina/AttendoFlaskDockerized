@@ -1,4 +1,4 @@
-# import cv2
+import cv2
 import numpy as np
 import face_recognition
 import os
@@ -18,9 +18,9 @@ class FaceRec:
         if(len(facesCurrFrame)==0):
             return "No face detected"
 
-        # imgS=cv2.resize(self.unknownImage,(0,0),None,0.25,0.25)
-#         imgS=cv2.cvtColor(imgS,cv2.COLOR_BGR2RGB)
-
+        imgS=cv2.resize(self.unknownImage,(0,0),None,0.25,0.25)
+        imgS=cv2.cvtColor(imgS,cv2.COLOR_BGR2RGB)
+        # print("Hi")
         attendee = []
         for encodeFace,faceLoc in zip(encodeCurrFrame,facesCurrFrame):
             matches = face_recognition.compare_faces(self.encodeListKnown,encodeFace)
@@ -30,8 +30,5 @@ class FaceRec:
             if matches[matchIndex]:
                 id = self.ids[matchIndex]
                 attendee.append(id)
-                
+        print("Face recognition")
         return attendee
-       
-
-
