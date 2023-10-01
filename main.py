@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, make_response
 import requests
 from flask_cors import CORS
 import json
-# import cv2
+import cv2
 from PIL import Image
 import base64
 import io
@@ -10,6 +10,8 @@ from face_rec import FaceRec
 import face_recognition
 import numpy as np
 import os
+# from dotenv import load_dotenv
+# load_dotenv()
 
 
 app = Flask(__name__)
@@ -41,16 +43,15 @@ def markAttendence():
                 result = data['imageSrc']
                 b = bytes(result,'utf-8')
                 image = b[b.find(b',')+1:]
-                img = Image.open(io.BytesIO(base64.b64decode(image)))
-#                 img = cv2.cvtColor(np.array(im), cv2.COLOR_BGR2RGB)
+                im = Image.open(io.BytesIO(base64.b64decode(image)))
+                img = cv2.cvtColor(np.array(im), cv2.COLOR_BGR2RGB)
 
                 # Creating a face_rec  class object
-                img = np.array(img)
                 faceRec = FaceRec(img,encodeListKnown,ids)
 
                 # Getting Ids which are recognized
                 unknownIds = faceRec.check_mark_attendence()
-
+                
                 # Checks for errors and marking Attendence
                 if(unknownIds == "No face detected"):
                     return make_response(jsonify({"error":"No face detected. Please try again"}),400)  
@@ -87,11 +88,10 @@ def getEncodings():
             result = data['data']
             b = bytes(result,'utf-8')
             image = b[b.find(b',')+1:]
-            img = Image.open(io.BytesIO(base64.b64decode(image)))
-#             img = cv2.cvtColor(np.array(im), cv2.COLOR_BGR2RGB)
+            im = Image.open(io.BytesIO(base64.b64decode(image)))
+            img = cv2.cvtColor(np.array(im), cv2.COLOR_BGR2RGB)
 
             # Getting Encoding from Image
-            img = np.array(img)
             facesCurrFrame = face_recognition.face_locations(img)
             encodeCurrFrame = face_recognition.face_encodings(img,facesCurrFrame)
 
@@ -107,7 +107,6 @@ def getEncodings():
             return make_response(jsonify({"error":"Some internal error occured"}),500)
     else:
         return make_response(jsonify({"error":"Bad response"}),400)            
-
 
 
 if __name__ == '__main__':
