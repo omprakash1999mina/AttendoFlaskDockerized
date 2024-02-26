@@ -65,15 +65,17 @@ def markAttendence():
                     if reqPost.status_code == 200:
                         return make_response(jsonify({"message":"Congratulations!! Your attendance has been marked"}),200)
                     else:
-                        return make_response(jsonify({"error":"Some internal error occured"}),500)
+                        return make_response(jsonify({"error":"Some internal error occurred"}),500)
 
                     # Code for marking attandance of multiple user. Removed due to performance issues due to python
                     # for id in unknownIds:
                     #     reqPost = requests.post("https://apis.techdevelopers.live/api/user/update/attendance", json={"id": id,"status":"P"})
                     #     print(reqPost.status_code)
+            else:
+                make_response(jsonify({"error":r.message}),400)
         except:
-            print("Some error occured")
-            return make_response(jsonify({"error":"Some internal error occured"}),500)
+            print("Some error occurred")
+            return make_response(jsonify({"error":"Some internal error occurred"}),500)
     else:
         return make_response(jsonify({"error":"Bad response"}),400)    
 
@@ -103,11 +105,14 @@ def getEncodings():
             else:
                 return make_response(jsonify({"error":"No face detected. Try with a new image file"}),406)
         except:
-            print("Some error occured")
-            return make_response(jsonify({"error":"Some internal error occured"}),500)
+            print("Some error occurred")
+            return make_response(jsonify({"error":"Some internal error occurred"}),500)
     else:
         return make_response(jsonify({"error":"Bad response"}),400)            
 
+@app.route('/status', methods=['GET'])
+def status():
+    return make_response(jsonify({"status": "success"}), 200)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
