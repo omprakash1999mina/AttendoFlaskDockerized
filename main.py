@@ -10,9 +10,10 @@ from face_rec import FaceRec
 import face_recognition
 import numpy as np
 import os
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
 
+load_dotenv()
+NODE_SERVER_URL = os.getenv("NODE_SERVER")
 
 app = Flask(__name__)
 CORS(app)
@@ -24,7 +25,7 @@ def markAttendence():
 
     if data :
         try:
-            r = requests.get("https://attendo.cyclic.app/api/encodings/"+data['teamName'])
+            r = requests.get(NODE_SERVER_URL + "/api/encodings/" + data['teamName'])
             if(r.status_code==200):
                 jsonObject=r.json()
 
@@ -61,7 +62,7 @@ def markAttendence():
                 elif len(unknownIds)>1:
                     return make_response(jsonify({"error":"More than one faces found. Please try again individually!!"}),400)
                 else:
-                    reqPost = requests.post("https://attendo.cyclic.app/api/user/update/attendance", json={"id": unknownIds[0],"status":"P"})
+                    reqPost = requests.post(NODE_SERVER_URL + "/api/user/update/attendance", json={"id": unknownIds[0],"status":"P"})
                     if reqPost.status_code == 200:
                         return make_response(jsonify({"message":"Congratulations!! Your attendance has been marked"}),200)
                     else:
